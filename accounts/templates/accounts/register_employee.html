@@ -1,0 +1,514 @@
+{% load static %}
+{% load customtags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>🍀 HOPE - Simulateur de Paie</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background: #f5f5f5; /* Light Grey */
+            color: #073c47; /* Dark Teal */
+        }
+
+        .content {
+            margin-right: 250px;
+        }
+
+        /* First Navbar (White Background) */
+        .first-navbar {
+            background-color: white;
+            border-bottom: 2px solid #dcdcdc;
+            padding: 0px 0;
+            padding-right: 100px;
+        }
+        .first-navbar .navbar-brand img {
+            height: 100px; /* Increased logo size */
+            margin-left: 80px; /* Left margin to align with other elements */
+            margin-top: 15px;
+        }
+        .first-navbar .nav-item {
+            margin-right: 20px;
+        }
+        .first-navbar .nav-item a {
+            color: #073c47;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .first-navbar .nav-item a:hover {
+            text-decoration: underline;
+            color: #7dc4c4;
+        }
+
+        /* Second Navbar (White Background, Dark Teal Text) */
+        .second-navbar {
+            background-color: white;
+            border-bottom: 2px solid #dcdcdc;
+            padding: 10px 0;
+        }
+        .second-navbar .navbar-nav {
+            margin-left: 80px; /* Align all items to the left, starting with the margin */
+        }
+        .second-navbar .nav-item {
+            margin-right: 20px;
+        }
+        .second-navbar .nav-item a {
+            color: #073c47;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s ease, border-bottom 0.3s ease; /* Ajoutez une transition pour la couleur et la bordure */
+        }
+
+        .second-navbar .nav-item a:hover {
+            color: #7dc4c4; /* Changez la couleur au survol */
+            border-bottom: 2px solid #7dc4c4; /* Ajoutez une bordure inférieure au survol */
+        }
+        .second-navbar .nav-item.active a {
+            color: #7dc4c4; /* Couleur de soulignement */
+            border-bottom: 2px solid #7dc4c4;
+        }
+
+        /* Information Header (Gradient Background) */
+        .info-header {
+            background: linear-gradient(to right, #073c47, #00161b);
+            color: white;
+            padding: 35px 20px; /* Increased padding for thicker bar */
+            text-align: left; /* Align text to the left */
+            font-weight: bold;
+            font-size: 2rem;
+            padding-left: 80px; /* Adjust text position inside the bar */
+            font-family:'Courier New', Courier, monospace;
+
+        }
+
+        /* New Navbar under Info-bar (White Background) */
+        .third-navbar {
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #dcdcdc;
+            padding: 1px 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        .third-navbar .navbar-nav {
+            margin-left: 80px;
+        }
+        .third-navbar .nav-item {
+            margin-right: 10px;
+            position: relative; /* Pour positionner les flèches */
+        }
+        .third-navbar .nav-item2 {
+            margin-right: 10px;
+            position: relative; /* Pour positionner les flèches */
+        }
+        .third-navbar .nav-item a {
+            color: #073c47;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 5px 20px; /* Padding to give it more clickable area */
+        }
+        .third-navbar .nav-item2 a {
+            color: #073c47;
+            text-decoration: none;
+            padding: 5px 20px; /* Padding to give it more clickable area */
+        }
+        .third-navbar .nav-item a:hover {
+            text-decoration: underline;
+        }
+        .third-navbar .nav-item2 a:hover {
+            text-decoration: none;
+        }
+        .third-navbar .nav-item.active a {
+            color: #7dc4c4;
+        }
+
+
+        footer {
+            background-color: #073c47; /* Dark Teal */
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: left;
+            font-family: 'Arial', sans-serif; /* Match the font */
+        }
+
+        footer h3 {
+            color: #7dc4c4; /* Light Green */
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        footer .footer-column {
+            margin-bottom: 20px;
+        }
+
+        footer .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        footer .footer-column ul li a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        footer .footer-column ul li a:hover {
+            color: #7dc4c4; /* Light Teal */
+            text-decoration: underline;
+        }
+
+        footer .contact-info {
+            line-height: 1.5; /* Adjust line height for spacing */
+        }
+
+        /* Style personnalisé pour centrer le bouton et ajouter du margin-bottom */
+        .form-submit-btn {
+            display: flex;
+            justify-content: center; /* Centre le bouton horizontalement */
+            margin-bottom: 30px; /* Augmentez cette valeur pour plus d'espace */
+        }
+
+        .form-submit-btn button {
+            padding: 10px 20px; /* Optionnel : ajustez le padding du bouton */
+        }
+        
+        .content {
+            margin-top: 50px;
+            margin-left: 250px;
+            margin-bottom: 100px;
+        }
+        .paragraph-container {
+            position: relative;
+            height: 50px; /* Ajuste la hauteur en fonction de la taille de ton paragraphe */
+        }
+
+        .paragraph {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;  /* Transition smooth sur l'opacité */
+            width: 100%;
+        }
+
+        .paragraph.active {
+            opacity: 1;  /* L'élément actif devient visible */
+        }
+
+
+
+        .container-form {
+            display: flex;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            margin: auto; /* Centrer horizontalement */
+        }
+
+        .welcome-section {
+            background: #002D38;
+            color: #fff;
+            padding: 60px;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-top: 20px;
+        }
+
+        .form-section {
+            padding: 40px;
+            width: 60%;
+        }
+
+        .form-section h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            height: 45px;
+            padding: 10px;
+        }
+
+        .form-check-label {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            height: 45px;
+            border-radius: 5px;
+            font-weight: bold;
+            background: #002D38;
+            border: none;
+        }
+
+        .form-footer {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: #002D38;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+                        
+
+    </style>
+</head>
+<body>
+
+    <!-- First Navbar -->
+    <nav class="navbar navbar-expand-lg first-navbar">
+        <a class="navbar-brand" href="{% url 'accounts:accueil' %}">
+            <img src="{% static 'ressources/css/logo2.png' %}" alt="Hope Logo">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarFirstNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}"><img src="{% static 'ressources/css/admin.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                            Page d'administration</a></li>
+                    {% endif %}
+                    {% if user.is_entreprise %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:salarie_list' %}"><img src="{% static 'ressources/css/collaborateur.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                            Gestion des collaborateurs</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="#"><img src="{% static 'ressources/css/profil4.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                        {{ user.username }}</a></li>
+                    <li class="nav-item"><a class="nav-link">|</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Aide</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">
+                            <img src="{% static 'ressources/css/deconnexion.png' %}" style="width: 20px; height: 20px;">
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link">|</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Aide</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Second Navbar -->
+    <nav class="navbar navbar-expand-lg second-navbar">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSecondNav" aria-controls="navbarSecondNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSecondNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'ressources:accueil' %}">Gestionnaire de ressources</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'simulateur_paie:accueil' %}">Simulateur de paie</a>
+                </li>    
+                <li class="nav-item"><a class="nav-link" href="{% url 'Chatbot:accueil_chatbot' %}">Chatbot</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Nos services</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">A propos de nous</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'accounts:contact' %}">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Information Header -->
+    <div class="info-header">
+        <h1>Gestion des collaborateurs</h1>
+    </div>
+    <!-- New Navbar under Info-bar -->
+    <nav class="navbar navbar-expand-lg third-navbar">
+        <div class="collapse navbar-collapse" id="navbarThirdNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:salarie_list' %}">Liste des collaborateurs</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'accounts:add_salarie' %}">+ Ajout d'un collaborateur</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="content">
+        <div class="container-form">
+            <div class="welcome-section">
+                <h1>Ajoutez vos collaborateurs ici !</h1>
+                <p>Inscrivez vos collaborateurs pour leur permettre d'accéder à nos outils en ligne.</p>
+            </div>
+    
+            <div class="form-section">
+                <h2>Ajouter d'un collaborateur</h2>
+                <form method="post">
+                    {% csrf_token %}
+        
+                    <!-- Champ Nom -->
+                    <div class="form-group" style="margin-top: 40px;">
+                        <label for="id_nom">Nom : </label>
+                        {{ form.nom }}
+                        {% if form.nom.errors %}
+                            <div class="text-danger">
+                                {% for error in form.nom.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+            
+                    <!-- Champ Prénom -->
+                    <div class="form-group">
+                        <label for="id_prenom">Prénom : </label>
+                        {{ form.prenom }}
+                        {% if form.prenom.errors %}
+                            <div class="text-danger">
+                                {% for error in form.prenom.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Champ Nom d'utilisateur -->
+                    <div class="form-group" style="margin-top: 50px;">
+                        <label for="id_username">Nom d'utilisateur : </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+            
+                    <!-- Champ Email -->
+                    <div class="form-group" style="margin-top: 50px;">
+                        <label for="id_email">Adresse e-mail : </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+            
+                    <!-- Champ Mot de passe -->
+                    <div class="form-group" style="margin-top: 50px;">
+                        <label for="id_password1">Mot de passe : </label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="text-danger">
+                                {% for error in form.password1.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+            
+                    <!-- Champ Confirmation du mot de passe -->
+                    <div class="form-group" style="margin-bottom: 30px;">
+                        <label for="id_password2">Confirmer le mot de passe : </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="text-danger">
+                                {% for error in form.password2.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+            
+                    <!-- Bouton de soumission -->
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </form>
+            </div>
+    
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 footer-column">
+                    <h3>Coordonnées</h3>
+                    <div class="contact-info">
+                        <p>HOPE SARL</p>
+                        <p>Gildo Pastor Center,</p>
+                        <p>7 Rue du Gabian</p>
+                        <p>98000 Monaco</p>
+                        <p>Tél: +33 6 03 62 25 80</p>
+                        <p>Email: guillemotkentin@gmail.com</p>
+                    </div>
+                </div>
+                <div class="col-md-6 footer-column">
+                    <h3>Liens</h3>
+                    <ul>
+                        <li><a href="#">Nos outils en ligne</a></li>
+                        <li><a href="#">Recrutement</a></li>
+                        <li><a href="#">Infos Pratiques</a></li>
+                        <li><a href="#">Actualités</a></li>
+                        <li><a href="#">Mentions légales</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+                
+
+        document.addEventListener("DOMContentLoaded", function () {
+        const paragraphs = document.querySelectorAll(".paragraph");
+        let currentIndex = 0;
+
+        setInterval(() => {
+            // Retire la classe active du paragraphe actuel
+            paragraphs[currentIndex].classList.remove("active");
+
+            // Passe au paragraphe suivant, ou revient au premier si c'est le dernier
+            currentIndex = (currentIndex + 1) % paragraphs.length;
+
+            // Ajoute la classe active au nouveau paragraphe
+            paragraphs[currentIndex].classList.add("active");
+        }, 3500);  // Changer de paragraphe toutes les 5 secondes
+        });
+
+    </script>
+</body>
+</html>

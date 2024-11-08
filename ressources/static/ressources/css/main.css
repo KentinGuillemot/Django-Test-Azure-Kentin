@@ -1,0 +1,105 @@
+/* main.css */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Police similaire */
+    background-color: #c8ad7f84; /* Couleur de fond */
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: #fff; /* Couleur du texte */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #cce7ff; /* Couleur du texte au survol */
+}
+
+.sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #c8ad7fc2;
+    color: #ffffff;
+    transition: all 0.3s;
+}
+
+.sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+
+.sidebar ul li {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    width: 100%;
+}
+.sidebar ul li a {
+    color: #d1d1d1;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sidebar ul li a:hover {
+    color: #fff;
+    background: #0056b3;
+}
+
+.main-content {
+    padding: 20px;
+}
+
+.calendar-filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.calendar-filters select {
+    margin-right: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.table-responsive th, .table-responsive td {
+    border: 1px solid #ddd; /* Légères bordures pour les cellules */
+    padding: 8px;
+    text-align: left; /* Alignement du texte à gauche */
+}
+
+.table-responsive th {
+    background-color: #003366; /* Couleur de fond pour les en-têtes de table */
+    color: #fff; /* Couleur du texte des en-têtes de table */
+}
+
+.table-responsive td {
+    background-color: #f0f0f0; /* Slightly less bright white */
+    color: #000; /* Ensure text color is readable */
+}
+
+#object-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.draggable {
+    cursor: move;
+}
+
+#calendar {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.calendar-container h4, 
+.calendar-container .fc-toolbar-title, 
+.calendar-container .fc-daygrid-day-top, 
+.calendar-container .fc-daygrid-day-number {
+    color: #ffffff !important; /* Set text color to white */
+}
+
+/* Add necessary styles if the existing ones don't suffice */
+.calendar-container {
+    margin-bottom: 20px;
+}

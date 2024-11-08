@@ -1,0 +1,619 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>🍀 HOPE - Accueil</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'ressources/css/main.css' %}">
+    <style>
+
+        .wrapper {
+            display: flex;
+            height: 100vh;
+            align-items: stretch;
+        }
+        /* Sidebar style */
+        .sidebar {
+            min-width: 60px;
+            max-width: 60px;
+            background-color: #073c47;
+            color: #ffffff;
+            transition: all 0.1s ease;
+            padding-top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1040;
+            margin-top: 50px; /* Adjust this value to match the height of the second navbar */
+        }
+
+        /* New wider second sidebar */
+        .second-sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background-color: rgba(245, 245, 245, 0.9); /* Optional slightly transparent */
+            color: #073c47;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 60px; /* Adjacent to the first sidebar */
+            z-index: 1050; /* Ensure it's on top */
+            overflow-y: auto;
+            box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.1); /* Add a shadow for better visibility */
+        }
+
+        /* Ensure the links in the second sidebar are visible and styled correctly */
+        .second-sidebar h3 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: #073c47;
+        }
+
+        .second-sidebar ul li a {
+            color: #073c47;
+            font-size: 1rem;
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .second-sidebar ul li a:hover {
+            color: #007bff;
+        }
+
+        .sidebar .nav-item:first-child {
+            margin-top: 20px; /* Ensures it's at the top */
+        }
+        .sidebar .nav-link {
+            color: #ffffff !important;
+            padding: 10px 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background-color: transparent !important; /* Ensure no background */
+        }
+        .sidebar .nav-link span {
+            display: none; /* Hide legend by default */
+            margin-left: 10px;
+        }
+        .sidebar.expanded .nav-link span {
+            display: inline;
+        }
+        .sidebar .navbar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar .nav-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .sidebar .nav-item:hover .nav-link,
+        .sidebar .nav-item:hover .nav-link img,
+        .sidebar .nav-item:hover .nav-link span {
+            color: #7dc4c4 !important;
+        }
+        .sidebar .nav-item a:hover {
+            background-color: transparent !important; /* Remove the background */
+            text-decoration: none; /* Remove underline if any */
+        }
+        .sidebar .nav-item .dropdown-toggle::after {
+            display: none;
+        }
+        .sidebar-header, .sidebar ul.components {
+            border-bottom: none;
+        }
+        .dropdown-sidebar {
+            display: none;
+            position: absolute;
+            left: 60px;
+            top: 0;
+            background: #073c47;
+            min-width: 200px;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            transition: left 0.3s ease;
+        }
+        .sidebar.expanded .dropdown-sidebar {
+            left: 200px; /* Adjust this value if sidebar max-width changes */
+        }
+
+        .sidebar .nav-link, .sidebar .dropdown-item {
+            color: #ffffff !important;
+        }
+        .sidebar .nav-link:hover, .sidebar .dropdown-item:hover {
+            color: #7dc4c4 !important;
+        }
+        .dropdown-sidebar .dropdown-item {
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: block;
+            background-color: transparent !important; /* Ensure no background */
+        }
+        .dropdown-sidebar .dropdown-item:hover {
+            color: #7dc4c4;
+            background-color: transparent !important; /* Ensure no background */
+        }
+        .sidebar-logo {
+            margin-top: auto;
+            padding: 10px;
+        }
+        .sidebar-logo img {
+            width: 100%;
+            height: auto;
+        }
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+            margin-left: 260px; /* Adjust this if the sidebar width changes */
+            margin-top: 70px; /* Adjust for the height of the navbar */
+            transition: margin-left 0.3s ease;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #7a7a7a51;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .dashboard-container {
+            position: relative;
+        }
+        .dashboard {
+            border: 1px solid #073c47;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 40px;
+            background-color: #fff;
+            margin-top: 40px;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #073c47 !important;
+            color: #fff !important;
+        }
+        .nav-tabs .nav-link {
+            color: #073c47 !important;
+        }
+        .card {
+            border-radius: 10px;
+            background-color: #073c47 !important;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .list-group-item {
+            border: none;
+            border-bottom: 1px solid #ddd;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            color: #073c47;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .dashboard-title {
+            background-color: #073c47;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            position: absolute;
+            top: -20px;
+            left: 20px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-right: auto;
+            margin-left: 20px;
+        }
+        .search-bar input {
+            border: 1px solid #073c47;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+        .search-bar button {
+            background-color: #073c47;
+            color: #ffffff;
+            border: none;
+            padding: 5px 5px;
+            border-radius: 4px;
+        }
+        .search-bar button:hover {
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        /* Second Navbar (White Background, Dark Teal Text) */
+        .second-navbar {
+            background-color: white;
+            border-bottom: 2px solid #dcdcdc;
+            padding: 10px 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            height: 50px;
+        }
+        .second-navbar .navbar-nav {
+            margin-left: 80px; /* Align all items to the left, starting with the margin */
+        }
+        .second-navbar .nav-item {
+            margin-right: 20px;
+        }
+        .second-navbar .nav-item a {
+            color: #073c47;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s ease, border-bottom 0.3s ease; /* Ajoutez une transition pour la couleur et la bordure */
+        }
+
+        .second-navbar .nav-item a:hover {
+            color: #7dc4c4; /* Changez la couleur au survol */
+            border-bottom: 2px solid #7dc4c4; /* Ajoutez une bordure inférieure au survol */
+        }
+        .second-navbar .nav-item.active a {
+            color: #7dc4c4; /* Couleur de soulignement */
+            border-bottom: 2px solid #7dc4c4;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Second Navbar -->
+    <nav class="navbar navbar-expand-lg second-navbar">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSecondNav" aria-controls="navbarSecondNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSecondNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="#">Gestionnaire de ressources</a></li>
+                <li class="nav-item {% if request.path == '/simulateur_paie/' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'simulateur_paie:accueil' %}">Simulateur de paie</a>
+                </li>    
+                <li class="nav-item"><a class="nav-link" href="{% url 'Chatbot:accueil_chatbot' %}">Chatbot</a></li>
+
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}"><img src="{% static 'ressources/css/admin.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                            Page d'administration</a></li>
+                    {% endif %}
+                    {% if user.is_entreprise %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:salarie_list' %}"><img src="{% static 'ressources/css/collaborateur.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                            Gestion des collaborateurs</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="#"><img src="{% static 'ressources/css/profil4.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                        {{ user.username }}</a></li>
+                    <li class="nav-item"><a class="nav-link">|</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Aide</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">
+                            <img src="{% static 'ressources/css/deconnexion.png' %}" style="width: 20px; height: 20px;">
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link">|</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Aide</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <!-- Barre latérale -->
+        <nav id="sidebar" class="sidebar">
+            <ul class="list-unstyled components navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ressources:index' %}">
+                        <img src="{% static 'ressources/css/maison_blanche2.png' %}" style="width: 25px; height: 25px;">
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ressources:calendar_view' %}">
+                        <img src="{% static 'ressources/css/calendrier_blanc.png' %}" style="width: 25px; height: 25px;">
+                        <span>Calendrier</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="navbarDropdown1" role="button">
+                        <img src="{% static 'ressources/css/liste_blanche.png' %}" style="width: 25px; height: 25px;">
+                        <span>Listes</span>
+                    </a>
+                    <div class="dropdown-sidebar">
+                        <a class="dropdown-item" href="{% url 'ressources:utili-liste' %}">Liste d'utilisateurs</a>
+                        <a class="dropdown-item" href="{% url 'ressources:objet-liste' %}">Liste d'objets</a>
+                        <a class="dropdown-item" href="{% url 'ressources:resa-liste' %}">Liste de réservations</a>
+                        <a class="dropdown-item" href="{% url 'ressources:condi-liste' %}">Liste des conditions</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="navbarDropdown2" role="button">
+                        <img src="{% static 'ressources/css/plus_blanc.png' %}" style="width: 25px; height: 25px;">
+                        <span>Ajouter</span>
+                    </a>
+                    <div class="dropdown-sidebar">
+                        <a class="dropdown-item" href="{% url 'ressources:create_user' %}">Ajout d'utilisateur</a>
+                        <a class="dropdown-item" href="{% url 'ressources:create_objet' %}">Ajout d'objet</a>
+                        <a class="dropdown-item" href="{% url 'ressources:ajout-resa' %}">Ajout de réservation</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <img src="{% static 'ressources/css/stat.png' %}" style="width: 25px; height: 25px;">
+                        <span>Statistiques</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="navbarDropdown3" role="button">
+                        <img src="{% static 'ressources/css/settings_blanc.png' %}" style="width: 25px; height: 25px;">
+                        <span>Paramètres</span>
+                    </a>
+                    <div class="dropdown-sidebar">
+                        <a class="dropdown-item" href="{% url 'ressources:choix_famille' 1 %}">Parametres Familles</a>
+                        <a class="dropdown-item" href="{% url 'ressources:create_condition' %}">Parametres Conditions/Atouts</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+
+        
+
+        <!-- Contenu principal -->
+        <div id="content" class="content">
+            <div class="dashboard-container">
+                <div class="dashboard-title"><i>Dashboard</i></div>
+                <div class="container dashboard">
+                    <!-- Statistiques -->
+                    <div class="row mb-4">
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Statistiques</h3>
+                            <div class="row">
+                                {% for stat in statistics %}
+                                    <div class="col-6 mb-3">
+                                        <div class="card text-white bg-{{ stat.color }}">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><i>{{ stat.title }}</i></h5>
+                                                <p class="card-text">{{ stat.value }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Réservations par Mois</h3>
+                            <canvas id="reservationsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Derniers ajouts -->
+                    <div class="row mb-4">
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Derniers Ajouts</h3>
+                            <ul class="nav nav-tabs" id="myTabRecent" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="recent-users-tab" data-toggle="tab" href="#recent-users" role="tab">Utilisateurs</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="recent-objects-tab" data-toggle="tab" href="#recent-objects" role="tab">Objets</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="recent-reservations-tab" data-toggle="tab" href="#recent-reservations" role="tab">Réservations</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContentRecent">
+                                <div class="tab-pane fade show active" id="recent-users" role="tabpanel">
+                                    <ul class="list-group">
+                                        {% for user in latest_users %}
+                                            <li class="list-group-item">{{ user.nom }} | {{ user.prenom }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="recent-objects" role="tabpanel">
+                                    <ul class="list-group">
+                                        {% for obj in latest_objects %}
+                                            <li class="list-group-item">{{ obj.nom }} | {{ obj.famille1 }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="recent-reservations" role="tabpanel">
+                                    <ul class="list-group">
+                                        {% for resa in latest_reservations %}
+                                            <li class="list-group-item">{{ resa.obj.nom }} | {{ resa.user.nom }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Listes avec onglets -->
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Listes</h3>
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="users-tab" data-toggle="tab" href="#users" role="tab">Utilisateurs</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="objects-tab" data-toggle="tab" href="#objects" role="tab">Objets</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="reservations-tab" data-toggle="tab" href="#reservations" role="tab">Réservations</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="users" role="tabpanel">
+                                    <ul class="list-group">
+                                        {% for user in random_users %}
+                                            <li class="list-group-item">{{ user.nom }} | {{ user.prenom }} | {{ user.conditions_as_string }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="objects" role="tabpanel">
+                                    <ul class="list-group">
+                                        {% for obj in random_objects %}
+                                            <li class="list-group-item">{{ obj.nom }} | {{ obj.famille1 }} | {{ obj.conditions_as_string }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="reservations" role="tabpanel">
+                                    <ul class="list-group">
+                                        {% for resa in random_reservations %}
+                                            <li class="list-group-item">{{ resa.obj.nom }} | {{ resa.date_debut|date:"d/m/Y" }} - {{ resa.date_fin|date:"d/m/Y" }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Graphique de réservations
+            const ctx = document.getElementById('reservationsChart').getContext('2d');
+            const reservationsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ reservation_months|safe }},
+                    datasets: [{
+                        label: 'Nombre de Réservations',
+                        data: {{ reservation_counts|safe }},
+                        backgroundColor: '#073c47',
+                        borderColor: '#073c47',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Gestion des dropdowns dans la barre latérale
+            const navItems = document.querySelectorAll(".nav-item.dropdown");
+            navItems.forEach(item => {
+                const link = item.querySelector(".nav-link");
+                const dropdownSidebar = item.querySelector(".dropdown-sidebar");
+
+                link.addEventListener("click", function(event) {
+                    event.stopPropagation();
+                    const isOpen = dropdownSidebar.style.display === "block";
+                    closeAllDropdowns();
+                    if (!isOpen) {
+                        dropdownSidebar.style.display = "block";
+                    }
+                });
+            });
+
+            document.addEventListener("click", function(event) {
+                if (!event.target.closest('.nav-item.dropdown')) {
+                    closeAllDropdowns();
+                }
+            });
+
+            function closeAllDropdowns() {
+                const dropdowns = document.querySelectorAll(".dropdown-sidebar");
+                dropdowns.forEach(dropdown => {
+                    dropdown.style.display = "none";
+                });
+            }
+
+            // Changement des images et des textes des items de la sidebar au survol
+            const navItemsLinks = document.querySelectorAll('.sidebar .nav-item');
+
+            navItemsLinks.forEach(item => {
+                const img = item.querySelector('img');
+                const span = item.querySelector('span');
+
+                const itemText = span ? span.textContent.trim() : '';
+                const originalSrcs = {
+                    "Accueil": "{% static 'ressources/css/maison_blanche2.png' %}",
+                    "Calendrier": "{% static 'ressources/css/calendrier_blanc.png' %}",
+                    "Listes": "{% static 'ressources/css/liste_blanche.png' %}",
+                    "Ajouter": "{% static 'ressources/css/plus_blanc.png' %}",
+                    "Statistiques": "{% static 'ressources/css/stat.png' %}",
+                    "Paramètres": "{% static 'ressources/css/settings_blanc.png' %}"
+                };
+                const hoverSrcs = {
+                    "Accueil": "{% static 'ressources/css/maison_verte2.png' %}",
+                    "Calendrier": "{% static 'ressources/css/calendrier_vert.png' %}",
+                    "Listes": "{% static 'ressources/css/liste_vert.png' %}",
+                    "Ajouter": "{% static 'ressources/css/plus_vert.png' %}",
+                    "Statistiques": "{% static 'ressources/css/stat_vert.png' %}",
+                    "Paramètres": "{% static 'ressources/css/settings_vert.png' %}"
+                };
+
+                if (originalSrcs[itemText] && hoverSrcs[itemText]) {
+                    item.addEventListener('mouseenter', () => {
+                        img.src = hoverSrcs[itemText];
+                        if (span) span.style.color = '#7dc4c4';
+                    });
+                    item.addEventListener('mouseleave', () => {
+                        img.src = originalSrcs[itemText];
+                        if (span) span.style.color = '#ffffff';
+                    });
+                }
+            });
+
+            // Gestion de l'ouverture et de la fermeture de la sidebar
+            
+            // Fonction de recherche
+            function searchFunction() {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                const links = {
+                    'accueil': '{% url "ressources:index" %}',
+                    'calendrier': '{% url "ressources:calendar_view" %}',
+                    'liste d\'utilisateurs': '{% url "ressources:utili-liste" %}',
+                    'liste d\'objets': '{% url "ressources:objet-liste" %}',
+                    'liste de réservations': '{% url "ressources:resa-liste" %}'
+                };
+                if (links[query]) {
+                    window.location.href = links[query];
+                } else {
+                    alert('Aucun résultat trouvé');
+                }
+            }
+        });
+
+
+    </script>
+</body>
+</html>

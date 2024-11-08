@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>🍀 HOPE - Accueil</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'ressources/css/main.css' %}">
+    <style>
+        .wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .sidebar ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #ffffff;
+        }
+        .sidebar ul p {
+            color: #fff;
+            padding: 10px;
+        }
+        .sidebar ul li {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+            width: 100%;
+        }
+        .sidebar ul li a {
+            color: #d1d1d1;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .sidebar ul li a:hover {
+            color: #fff;
+            background: #000000;
+        }
+        .content {
+            width: 100%;
+            padding: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Barre de navigation supérieure -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <a class="navbar-brand" href="{% url 'ressources:index' %}">Gestionnaire de Ressources</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="{% url 'ressources:index' %}">Accueil <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="{% url 'ressources:calendar_view' %}">Calendrier</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <!-- Barre de navigation latérale -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+            </div>
+            <ul class="list-unstyled components">
+                <li><a href="{% url 'ressources:index' %}">🏠 Accueil</a></li>
+                <li><a href="{% url 'ressources:calendar_view' %}">📅 Calendrier</a></li>
+                <p>Listes :</p>
+                <li><a href="{% url 'ressources:utili-liste' %}">👤 Listes des utilisateurs</a></li>
+                <li><a href="{% url 'ressources:objet-liste' %}">🖥️ Listes des objets</a></li>
+                <li><a href="{% url 'ressources:resa-liste' %}">📋 Listes des reservations</a></li>
+                <p>Modifications :</p>
+                <li><a href="{% url 'ressources:create_user' %}">➕ Ajouter Utilisateur</a></li>
+                <li><a href="{% url 'ressources:create_objet' %}">➕ Ajouter Objet</a></li>
+                <li><a href="{% url 'ressources:ajout-resa' %}">➕ Ajouter Réservation</a></li>
+                <li><a href="{% url 'ressources:choix_famille' 3 %}">🖊️ Choix Nom des Familles</a></li>
+            </ul>
+        </nav>
+
+
+        <div id="content" class="content">
+
+
+            <h2 style="color:#ffffff">Liste des objets :</h2>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>NOM</th>
+                            <th>RESERVER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in objets %}
+                        <tr>
+                            <td>{{ obj.nom }}</td>
+                            <td><a href="{% url 'ressources:create_resa' obj.id %}" >Réserver</a></td>>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+     
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

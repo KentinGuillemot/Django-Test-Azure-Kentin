@@ -1,0 +1,971 @@
+{% load static %}
+{% load customtags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>🍀 HOPE - Simulateur de Paie</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: #d7d7d754;
+            color: #073c47; /* Dark Teal */
+        }
+
+        
+
+        /* First Navbar (White Background) */
+        .first-navbar {
+            background-color: white;
+            border-bottom: 2px solid #dcdcdc;
+            padding: 0px 0;
+            padding-right: 100px;
+        }
+        .first-navbar .navbar-brand img {
+            height: 100px; /* Increased logo size */
+            margin-left: 80px; /* Left margin to align with other elements */
+            margin-top: 15px;
+        }
+        .first-navbar .nav-item {
+            margin-right: 20px;
+        }
+        .first-navbar .nav-item a {
+            color: #073c47;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .first-navbar .nav-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Second Navbar (White Background, Dark Teal Text) */
+        .second-navbar {
+            background-color: white;
+            border-bottom: 2px solid #dcdcdc;
+            padding: 10px 0;
+        }
+        .second-navbar .navbar-nav {
+            margin-left: 80px; /* Align all items to the left, starting with the margin */
+        }
+        .second-navbar .nav-item {
+            margin-right: 20px;
+        }
+        .second-navbar .nav-item a {
+            color: #073c47;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s ease, border-bottom 0.3s ease; /* Ajoutez une transition pour la couleur et la bordure */
+        }
+
+        .second-navbar .nav-item a:hover {
+            color: #7dc4c4; /* Changez la couleur au survol */
+            border-bottom: 2px solid #7dc4c4; /* Ajoutez une bordure inférieure au survol */
+        }
+        .second-navbar .nav-item.active a {
+            color: #7dc4c4; /* Couleur de soulignement */
+            border-bottom: 2px solid #7dc4c4;
+        }
+
+        /* Information Header (Gradient Background) */
+        .info-header {
+            background: linear-gradient(to right, #073c47, #00161b);
+            color: white;
+            padding: 35px 20px; /* Increased padding for thicker bar */
+            text-align: left; /* Align text to the left */
+            font-weight: bold;
+            font-size: 2rem;
+            padding-left: 80px; /* Adjust text position inside the bar */
+            font-family:'Courier New', Courier, monospace;
+
+        }
+
+        /* New Navbar under Info-bar (White Background) */
+        .third-navbar {
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #dcdcdc;
+            padding: 1px 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        .third-navbar .navbar-nav {
+            margin-left: 80px;
+        }
+        .third-navbar .nav-item {
+            margin-right: 10px;
+            position: relative; /* Pour positionner les flèches */
+        }
+        .third-navbar .nav-item a {
+            color: #073c47;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 5px 20px; /* Padding to give it more clickable area */
+        }
+        .third-navbar .nav-item a:hover {
+            text-decoration: underline;
+        }
+        .third-navbar .nav-item.active a {
+            color: #7dc4c4;
+        }
+
+        /* Flèche après chaque élément, sauf le dernier */
+        .form-section {
+            border: 1px solid #dcdcdc; /* Bordure autour de chaque section */
+            padding: 20px; /* Espace interne pour aérer le contenu */
+            margin-bottom: 20px; /* Espace entre les sections */
+            border-radius: 5px; /* Coins arrondis pour un effet plus doux */
+            background-color: #f9f9f9; /* Fond léger pour faire ressortir les sections */
+            max-width: 1000px; /* Réduire la largeur maximale */
+            margin-left: auto; /* Centrer les sections horizontalement */
+            margin-right: auto; /* Centrer les sections horizontalement */
+        }
+
+        /* Ajouter un espace au-dessus du premier form-section */
+        .form-section:first-of-type {
+            margin-top: 20px; /* Ajustez cette valeur pour plus d'espace */
+        }
+
+        /* Colonne gauche (Information) */
+        .info-section {
+            padding-right: 15px; /* Espace à droite pour séparer du formulaire */
+            border-right: 1px solid #dcdcdc; /* Séparation visuelle entre les deux colonnes */
+        }
+
+        /* Colonne droite (Formulaire) */
+        .form-fields-section {
+            padding-left: 15px; /* Espace à gauche pour séparer des informations */
+        }
+
+
+        .form-section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #073c47; /* Dark Teal */
+            margin-bottom: 10px;
+            margin-top: 60px;
+            margin-left: 300px;
+        }
+
+        .form-section-line {
+            width: 60%; /* Line length */
+            border-bottom: 2px solid #073c47; /* Line color and thickness */
+            margin: 0 auto; /* Center the line under the title */
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .form-group label {
+            width: 200px; /* Fixed width for labels */
+            font-weight: bold;
+            margin-right: 10px;
+            text-align: left; /* Align label text to left */
+        }
+
+        .form-group .form-control, 
+        .form-group .custom-select,
+        .form-group .radio-group,
+        .form-group .radio-select {
+            width: calc(100% - 220px); /* Total width minus label width plus some margin */
+            text-align: left; /* Align field text to left */
+        }
+        .form-text.text-muted {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-left: 10px; /* Add space between the field and the message */
+        }
+
+        footer {
+            background-color: #073c47; /* Dark Teal */
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: left;
+            font-family: 'Arial', sans-serif; /* Match the font */
+        }
+
+        footer h3 {
+            color: #7dc4c4; /* Light Green */
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        footer .footer-column {
+            margin-bottom: 20px;
+        }
+
+        footer .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        footer .footer-column ul li a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        footer .footer-column ul li a:hover {
+            color: #7dc4c4; /* Light Teal */
+            text-decoration: underline;
+        }
+
+        footer .contact-info {
+            line-height: 1.5; /* Adjust line height for spacing */
+        }
+        .btn-primary {
+            background-color: #073c47 ;
+            border: none;
+            align-items: center; 
+        }
+        .btn-primary:hover {
+            background-color: #7dc4c4 ;
+            border: none;  /* Changement de couleur au survol */
+            transform: scale(1.1);  
+        }
+
+        /* Style personnalisé pour centrer le bouton et ajouter du margin-bottom */
+        .form-submit-btn {
+            display: flex;
+            justify-content: center; /* Centre le bouton horizontalement */
+            margin-bottom: 30px; /* Augmentez cette valeur pour plus d'espace */
+        }
+
+        .form-submit-btn button {
+            padding: 10px 20px; /* Optionnel : ajustez le padding du bouton */
+        }
+
+        .sk-fading-circle {
+        margin: 100px auto;
+        width: 80px;
+        height: 80px;
+        position: relative;
+        }
+
+        .sk-circle {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        }
+
+        .sk-circle:before {
+        content: '';
+        display: block;
+        margin: 0 auto;
+        width: 15%;
+        height: 15%;
+        background-color: #073c47;
+        border-radius: 100%;
+        animation: sk-circleFadeDelay 1.2s infinite ease-in-out both;
+        }
+
+        .sk-circle2 { transform: rotate(30deg); }
+        .sk-circle3 { transform: rotate(60deg); }
+        .sk-circle4 { transform: rotate(90deg); }
+        .sk-circle5 { transform: rotate(120deg); }
+        .sk-circle6 { transform: rotate(150deg); }
+        .sk-circle7 { transform: rotate(180deg); }
+        .sk-circle8 { transform: rotate(210deg); }
+        .sk-circle9 { transform: rotate(240deg); }
+        .sk-circle10 { transform: rotate(270deg); }
+        .sk-circle11 { transform: rotate(300deg); }
+        .sk-circle12 { transform: rotate(330deg); }
+
+        .sk-circle2:before {
+        animation-delay: -1.1s;
+        }
+        .sk-circle3:before {
+        animation-delay: -1.0s;
+        }
+        .sk-circle4:before {
+        animation-delay: -0.9s;
+        }
+        .sk-circle5:before {
+        animation-delay: -0.8s;
+        }
+        .sk-circle6:before {
+        animation-delay: -0.7s;
+        }
+        .sk-circle7:before {
+        animation-delay: -0.6s;
+        }
+        .sk-circle8:before {
+        animation-delay: -0.5s;
+        }
+        .sk-circle9:before {
+        animation-delay: -0.4s;
+        }
+        .sk-circle10:before {
+        animation-delay: -0.3s;
+        }
+        .sk-circle11:before {
+        animation-delay: -0.2s;
+        }
+        .sk-circle12:before {
+        animation-delay: -0.1s;
+        }
+
+        @keyframes sk-circleFadeDelay {
+        0%, 39%, 100% {
+            opacity: 0;
+        }
+        40% {
+            opacity: 1;
+        }
+        }
+          
+        
+       
+                
+
+    </style>
+</head>
+<body>
+    <!-- First Navbar -->
+    <nav class="navbar navbar-expand-lg first-navbar">
+        <a class="navbar-brand" href="{% url 'accounts:accueil' %}">
+            <img src="{% static 'ressources/css/logo2.png' %}" alt="Hope Logo">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarFirstNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}"><img src="{% static 'ressources/css/admin.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                            Page d'administration</a></li>
+                    {% endif %}
+                    {% if user.is_entreprise %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:salarie_list' %}"><img src="{% static 'ressources/css/collaborateur.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                            Gestion des collaborateurs</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="#"><img src="{% static 'ressources/css/profil4.png' %}" style="width: 20px; height: 20px;margin-right: 5px;margin-bottom: 5px;">
+                        {{ user.username }}</a></li>
+                    <li class="nav-item"><a class="nav-link">|</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Aide</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">
+                            <img src="{% static 'ressources/css/deconnexion.png' %}" style="width: 20px; height: 20px;">
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Inscription</a></li>
+                    <li class="nav-item"><a class="nav-link">|</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Aide</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Second Navbar -->
+    <nav class="navbar navbar-expand-lg second-navbar">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSecondNav" aria-controls="navbarSecondNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSecondNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'ressources:accueil' %}">Gestionnaire de ressources</a></li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'simulateur_paie:accueil' %}">Simulateur de paie</a>
+                </li>    
+                <li class="nav-item"><a class="nav-link" href="{% url 'Chatbot:accueil_chatbot' %}">Chatbot</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Nos services</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">A propos de nous</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'accounts:contact' %}">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Information Header -->
+    <div class="info-header">
+        <h1>Simulateur de Paie | Modification formulaire</h1>
+    </div>
+    <!-- New Navbar under Info-bar -->
+    <nav class="navbar navbar-expand-lg third-navbar">
+        <div class="collapse navbar-collapse" id="navbarThirdNav">
+            <ul class="navbar-nav">
+                <li class="nav-item {% if request.path == '/simulateur_paie/' %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'simulateur_paie:accueil' %}">Simulateur</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'simulateur_paie:historique' %}">Historique des simulations</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item2">
+                        <a class="nav-link" href="{% url 'accounts:login_paie' %}" style="color: #6b6b6bc4; font-style: italic;">Historique des simulations | Se connecter pour accéder</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="content">
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            
+            
+            <!-- Section 1: Mandatory Information -->
+            <h2 class="form-section-title">Section 1: Informations Obligatoires</h2>
+            <p class="text-center" style="margin-bottom: 30px;">Cette section est obligatoire et doit être remplie pour calculer correctement les résultats.</p>
+
+            <!-- Bloc 1: Heures semaines, heures mois, type salarie -->
+            <div class="form-section">
+                <div class="row no-gutters">
+                    <!-- Colonne de gauche pour les informations -->
+                    <div class="col-md-4 info-section">
+                        <h3>Heures/Type de salarié</h3>
+                        <p>Remplissez les heures par semaine, les heures par mois, et choisissez le type de salarié.</p>
+                    </div>
+                    <!-- Colonne de droite pour le formulaire -->
+                    <div class="col-md-8 form-fields-section">
+                        <div class="form-group">
+                            <label for="id_heures_semaine" style="margin-right : 0px;width: 180px;">Heures par semaine :</label>
+                            {{ form.heures_semaine }} <!-- Champ du formulaire -->
+                            {{ form.heures_semaine.errors }} <!-- Affiche les erreurs du formulaire, si présentes -->
+                        </div>
+    
+                        <div class="form-group">
+                            <label for="id_heures_mois" style="margin-right : 0px;width: 180px;" >Heures par mois :</label>
+                            {{ form.heures_mois }}
+                            {{ form.heures_mois.errors }}
+                        </div>
+    
+                        <div class="form-group" style="margin-left: 87px;margin-top: 25px;">
+                            <label for="id_type_salarie" style="margin-right : 0px;width: 160px;">Type de salarié :</label>
+                            {{ form.type_salarie }}
+                            {{ form.type_salarie.errors }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloc 5: Salaire Brut Heure et Salaire Brut Mois -->
+            <div class="form-section">
+                <div class="row no-gutters">
+                    <div class="col-md-4 info-section">
+                        <h3>Salaire Brut</h3>
+                        <p>Entrez le salaire brut par heure et par mois pour calculer les montants totaux.</p>
+                    </div>
+                    <div class="col-md-8 form-fields-section">
+                        <div class="form-group">
+                            <label for="id_salaire_brut_heure" style="margin-right : 0px;width: 200px;">Salaire brut par heure :</label>
+                            {{ form.salaire_brut_heure }}
+                            {{ form.salaire_brut_heure.errors }}
+                            <span id="smic-warning" style="color: red; font-weight: bold; display: none;">
+                                <img src="{% static 'ressources/css/attention.png' %}" style="width: 20px; height:20px;margin-left: 10px;">
+                                Taux Horaire &lt; SMIC</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_salaire_brut_mois" style="margin-right : 0px;width: 200px;">Salaire brut par mois :</label>
+                            {{ form.salaire_brut_mois }}
+                            {{ form.salaire_brut_mois.errors }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloc 6: Remboursement, tickets resto et panier -->
+            <div class="form-section">
+                <div class="row no-gutters">
+                    <div class="col-md-4 info-section">
+                        <h3>Non-Soumis</h3>
+                        <p>Complétez les informations concernant le remboursement des frais de transport, les tickets resto, et les paniers repas.</p>
+                    </div>
+                    <div class="col-md-8 form-fields-section">
+                        <div class="form-group">
+                            <label for="id_remboursement_transport">Remboursement transport :</label>
+                            {{ form.remboursement_transport }}
+                            {{ form.remboursement_transport.errors }}
+                        </div>
+                        <div class="form-group" style="margin-top: 50px;">
+                            <label for="id_ticket_resto_prix">Nombre de tickets resto :</label>
+                            {{ form.ticket_resto_prix }}
+                            {{ form.ticket_resto_prix.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_ticket_resto_sal">Contribution salariale tickets resto :</label>
+                            {{ form.ticket_resto_sal }}
+                            {{ form.ticket_resto_sal.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_ticket_resto_patr">Contribution patronale tickets resto :</label>
+                            {{ form.ticket_resto_patr }}
+                            {{ form.ticket_resto_patr.errors }}
+                        </div>
+                        <div class="form-group" style="margin-top: 50px;">
+                            <label for="id_panier_prix">Nombre de panier :</label>
+                            {{ form.panier_prix }}
+                            {{ form.panier_prix.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_paniers_sal">Montant panier :</label>
+                            {{ form.paniers_sal }}
+                            {{ form.paniers_sal.errors }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="form-section-title">Section 2: Informations Facultatives</h2>
+            <p class="text-center">Cette section est optionnelle et sert à obtenir des résultats plus précis.</p>
+
+            <!-- Checkbox to show/hide section 2 -->
+            <div class="form-group text-center">
+                <label for="id_section2_toggle">
+                    <input type="checkbox" id="id_section2_toggle" onclick="toggleSection2()"> Cocher pour section 2
+                </label>
+            </div>
+            
+            <div id="section2_content" style="display:none;">
+                <!-- Bloc 2: Prévoyance -->
+                <div class="form-section">
+                    <div class="row no-gutters">
+                        <div class="col-md-4 info-section">
+                            <h3>Prevoyance</h3>
+                            <p>Cochez la case Prévoyance si applicable, et remplissez les champs supplémentaires si nécessaire.</p>
+                        </div>
+                        <div class="col-md-8 form-fields-section">
+                            <div class="form-group">
+                                <label for="id_prevoyance" style="margin-right : 0px;width: 110px;">Prévoyance :</label>
+                                {{ form.prevoyance }}
+                                {{ form.prevoyance.errors }}
+                            </div>
+                            <div id="prevoyance_fields" style="display: none; margin-left: 50px;margin-top: 25px;">
+                                <div class="form-group">
+                                    <label for="id_type_plafond" style="margin-right : 0px;width: 160px;">Type de plafond :</label>
+                                    {{ form.type_plafond }}
+                                    {{ form.type_plafond.errors }}
+                                </div>
+                                <div class="form-group" style="margin-top: 50px;">
+                                    <label for="id_taux_prev_T1_sal" style="margin-right : 0px;width: 238px;">Taux Prévoyance T1 salarial :</label>
+                                    {{ form.taux_prev_T1_sal }}
+                                    {{ form.taux_prev_T1_sal.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_taux_prev_T1_patr" style="margin-right : 0px;width: 238px;">Taux Prévoyance T1 patronal :</label>
+                                    {{ form.taux_prev_T1_patr }}
+                                    {{ form.taux_prev_T1_patr.errors }}
+                                </div>
+                                <div class="form-group" style="margin-top: 50px;">
+                                    <label for="id_taux_prev_T2_sal" style="margin-right : 0px;width: 238px;">Taux Prévoyance T2 salarial :</label>
+                                    {{ form.taux_prev_T2_sal }}
+                                    {{ form.taux_prev_T2_sal.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_taux_prev_T2_patr" style="margin-right : 0px;width: 238px;">Taux Prévoyance T2 patronal :</label>
+                                    {{ form.taux_prev_T2_patr }}
+                                    {{ form.taux_prev_T2_patr.errors }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bloc 3: Mutuelle -->
+                <div class="form-section">
+                    <div class="row no-gutters">
+                        <div class="col-md-4 info-section">
+                            <h3>Mutuelle</h3>
+                            <p>Cochez la case Mutuelle si applicable, et remplissez les champs supplémentaires si nécessaire.</p>
+                        </div>
+                        <div class="col-md-8 form-fields-section">
+                            <div class="form-group">
+                                <label for="id_mutuelle" style="margin-right : 0px;width: 90px;">Mutuelle :</label>
+                                {{ form.mutuelle }}
+                                {{ form.mutuelle.errors }}
+                            </div>
+                            <div id="mutuelle_fields" style="display: none;">
+                                <div class="form-group" style="margin-top: 40px;">
+                                    <label for="id_montant_mutu_sal" style="margin-right : 0px;width: 234px;">Montant mutuelle salarial :</label>
+                                    {{ form.montant_mutu_sal }}
+                                    {{ form.montant_mutu_sal.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_montant_mutu_patr" style="margin-right : 0px;width: 234px;">Montant mutuelle patronal :</label>
+                                    {{ form.montant_mutu_patr }}
+                                    {{ form.montant_mutu_patr.errors }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Bloc 4: Taux ATHT, Taux CCSS Red, Admin SAM, Exclu Ass Cho, CCPB Ouvrier, CCPB Etam Cadre -->
+                <div class="form-section">
+                    <div class="row no-gutters">
+                        <div class="col-md-4 info-section">
+                            <h3>Taux et status</h3>
+                            <p>Remplissez les champs pour le Taux ATHT, Taux CCSS réduit, et les autres informations nécessaires. Certaines cases sont incompatibles entre elles.</p>
+                        </div>
+                        <div class="col-md-8 form-fields-section">
+                            <div class="form-group">
+                                <label for="id_Taux_ATHT" style="margin-right : 0px;width: 140px;">Taux A.T.H.T :</label>
+                                {{ form.Taux_ATHT }}
+                                {{ form.Taux_ATHT.errors }}
+                            </div>
+                            <div class="form-group" style="margin-left: 30px; margin-top: 50px;">
+                                <label for="id_taux_ccss_red" style="margin-right : 0px;width: 250px;">Taux CCSS réduit :</label>
+                                {{ form.taux_ccss_red }}
+                                {{ form.taux_ccss_red.errors }}
+                            </div>
+                            <div class="form-group" style="margin-left: 30px;">
+                                <label for="id_admin_SAM" style="margin-right : 0px;width: 250px;">Administrateur de SAM :</label>
+                                {{ form.admin_SAM }}
+                                {{ form.admin_SAM.errors }}
+                            </div>
+                            <div class="form-group" style="margin-left: 30px;">
+                                <label for="id_Exclu_ass_cho" style="margin-right : 0px;width: 250px;">Exclusion Assurance chômage :</label>
+                                {{ form.Exclu_ass_cho }}
+                                {{ form.Exclu_ass_cho.errors }}
+                            </div>
+                            <div class="form-group" style="margin-left: 30px;">
+                                <label for="id_CCPB_ouvrier" style="margin-right : 0px;width: 250px;">CCPB Ouvrier :</label>
+                                {{ form.CCPB_ouvrier }}
+                                {{ form.CCPB_ouvrier.errors }}
+                            </div>
+                            <div class="form-group" style="margin-left: 30px;">
+                                <label for="id_CCPB_Etam_cadre" style="margin-right : 0px;width: 250px;">CCPB Etam/cadre :</label>
+                                {{ form.CCPB_Etam_cadre }}
+                                {{ form.CCPB_Etam_cadre.errors }}
+                            </div>
+                            <div class="form-group" style="margin-left: 30px;">
+                                <label for="id_Gens_de_Maison" style="margin-right : 0px;width: 250px;">Gens de Maison :</label>
+                                {{ form.Gens_de_Maison }}
+                                {{ form.Gens_de_Maison.errors }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+    
+    
+            <!-- Centrer le bouton et ajouter un margin-bottom -->
+            <div class="form-submit-btn">
+                <button type="submit" class="btn btn-primary">Enregister les modifications</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="spinner" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
+        <div class="sk-fading-circle">
+        <div class="sk-circle1 sk-circle"></div>
+        <div class="sk-circle2 sk-circle"></div>
+        <div class="sk-circle3 sk-circle"></div>
+        <div class="sk-circle4 sk-circle"></div>
+        <div class="sk-circle5 sk-circle"></div>
+        <div class="sk-circle6 sk-circle"></div>
+        <div class="sk-circle7 sk-circle"></div>
+        <div class="sk-circle8 sk-circle"></div>
+        <div class="sk-circle9 sk-circle"></div>
+        <div class="sk-circle10 sk-circle"></div>
+        <div class="sk-circle11 sk-circle"></div>
+        <div class="sk-circle12 sk-circle"></div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 footer-column">
+                    <h3>Coordonnées</h3>
+                    <div class="contact-info">
+                        <p>HOPE SARL</p>
+                        <p>Gildo Pastor Center,</p>
+                        <p>7 Rue du Gabian</p>
+                        <p>98000 Monaco</p>
+                        <p>Tél: +33 6 03 62 25 80</p>
+                        <p>Email: guillemotkentin@gmail.com</p>
+                    </div>
+                </div>
+                <div class="col-md-6 footer-column">
+                    <h3>Liens</h3>
+                    <ul>
+                        <li><a href="#">Nos outils en ligne</a></li>
+                        <li><a href="#">Recrutement</a></li>
+                        <li><a href="#">Infos Pratiques</a></li>
+                        <li><a href="#">Actualités</a></li>
+                        <li><a href="#">Mentions légales</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function updateFields() {
+            const prevoyance = document.getElementById('id_prevoyance').checked;
+            const prevoyanceFields = document.getElementById('prevoyance_fields');
+            prevoyanceFields.style.display = prevoyance ? 'block' : 'none';
+
+            const mutuelle = document.getElementById('id_mutuelle').checked;
+            const mutuelleFields = document.getElementById('mutuelle_fields');
+            mutuelleFields.style.display = mutuelle ? 'block' : 'none';
+        }
+
+        function calculateFieldValues() {
+            const heuresSemaineField = document.getElementById('id_heures_semaine');
+            const heuresMoisField = document.getElementById('id_heures_mois');
+            const salaireBrutHeureField = document.getElementById('id_salaire_brut_heure');
+            const salaireBrutMoisField = document.getElementById('id_salaire_brut_mois');
+
+            heuresSemaineField.addEventListener('input', function() {
+                const heuresSemaine = parseFloat(heuresSemaineField.value) || 0;
+                if (heuresSemaine > 0) {
+                    heuresMoisField.value = (heuresSemaine * 4.3333).toFixed(2);
+                }
+            });
+
+            heuresMoisField.addEventListener('input', function() {
+                const heuresMois = parseFloat(heuresMoisField.value) || 0;
+                if (heuresMois > 0) {
+                    heuresSemaineField.value = (heuresMois / 4.3333).toFixed(2);
+                }
+            });
+
+            salaireBrutHeureField.addEventListener('input', function() {
+                const salaireBrutHeure = parseFloat(salaireBrutHeureField.value) || 0;
+                const heuresMois = parseFloat(heuresMoisField.value) || 0;
+                if (salaireBrutHeure > 0 && heuresMois > 0) {
+                    salaireBrutMoisField.value = (salaireBrutHeure * heuresMois).toFixed(2);
+                }
+            });
+
+            salaireBrutMoisField.addEventListener('input', function() {
+                const salaireBrutMois = parseFloat(salaireBrutMoisField.value) || 0;
+                const heuresSemaine = parseFloat(heuresSemaineField.value) || 0;
+                if (salaireBrutMois > 0 && heuresSemaine > 0) {
+                    salaireBrutHeureField.value = (salaireBrutMois / (heuresSemaine * 4.3333)).toFixed(2);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('id_prevoyance').addEventListener('change', updateFields);
+            document.getElementById('id_mutuelle').addEventListener('change', updateFields);
+            calculateFieldValues(); // Initial call to set event listeners
+
+            // Hide fields initially based on default values
+            updateFields();
+
+            // Custom script for automatic checkbox selection
+            const ccpbOuvrierOui = document.getElementById('id_CCPB_ouvrier_0'); // Oui pour CCPB Ouvrier
+            const ccpbOuvrierNon = document.getElementById('id_CCPB_ouvrier_1'); // Non pour CCPB Ouvrier
+            const ccpbEtamOui = document.getElementById('id_CCPB_Etam_cadre_0'); // Oui pour CCPB Etam
+            const ccpbEtamNon = document.getElementById('id_CCPB_Etam_cadre_1'); // Non pour CCPB Etam
+            const gensDeMaisonOui = document.getElementById('id_Gens_de_Maison_0'); // Oui pour Gens de Maison
+            const tauxCcssRedOui = document.getElementById('id_taux_ccss_red_0'); // Oui pour Taux ccss red
+            const tauxCcssRedNon = document.getElementById('id_taux_ccss_red_1'); // Non pour Taux ccss red
+
+
+            const gensDeMaisonNon = document.getElementById('id_Gens_de_Maison_1');
+            const adminSamOui = document.getElementById('id_admin_SAM_0');
+            const adminSamNon = document.getElementById('id_admin_SAM_1');
+            const excluAssChoOui = document.getElementById('id_Exclu_ass_cho_0');
+            const excluAssChoNon = document.getElementById('id_Exclu_ass_cho_1');
+
+            ccpbOuvrierOui.addEventListener('change', function() {
+                if (ccpbOuvrierOui.checked) {
+                    ccpbEtamNon.checked = true;
+                    gensDeMaisonNon.checked = true;
+                }
+            });
+
+            ccpbEtamOui.addEventListener('change', function() {
+                if (ccpbEtamOui.checked) {
+                    ccpbOuvrierNon.checked = true;
+                    gensDeMaisonNon.checked = true;
+                }
+            });
+
+            gensDeMaisonOui.addEventListener('change', function() {
+                if (gensDeMaisonOui.checked) {
+                    tauxCcssRedOui.checked = true;
+                    adminSamNon.checked = true;
+                    excluAssChoNon.checked = true;
+                    ccpbOuvrierNon.checked = true;
+                    ccpbEtamNon.checked = true;
+                }
+            });
+
+            excluAssChoOui.addEventListener('change', function() {
+                if (excluAssChoOui.checked) {
+                    gensDeMaisonNon.checked = true;
+                }
+            });
+        });
+
+        function toggleSection2() {
+            var section2 = document.getElementById('section2_content');
+            var checkbox = document.getElementById('id_section2_toggle');
+            if (checkbox.checked) {
+                section2.style.display = 'block';
+            } else {
+                section2.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const salaireBrutHeureField = document.getElementById('id_salaire_brut_heure');
+            const salaireBrutMoisField = document.getElementById('id_salaire_brut_mois');
+            const heuresSemaineField = document.getElementById('id_heures_semaine');
+            const heuresMoisField = document.getElementById('id_heures_mois');
+            const smicWarning = document.getElementById('smic-warning');
+            
+            function checkSmicWarning() {
+                const salaireBrutHeure = parseFloat(salaireBrutHeureField.value) || 0;
+                if (salaireBrutHeure < 11.65) {
+                    smicWarning.style.display = 'block';
+                } else {
+                    smicWarning.style.display = 'none';
+                }
+            }
+
+            // Function to recalculate monthly salary based on hourly salary and weekly hours
+            function recalculateSalaireBrutMois() {
+                const salaireBrutHeure = parseFloat(salaireBrutHeureField.value) || 0;
+                const heuresSemaine = parseFloat(heuresSemaineField.value) || 0;
+                if (salaireBrutHeure > 0 && heuresSemaine > 0) {
+                    const salaireBrutMois = salaireBrutHeure * ((heuresSemaine * 4.3333).toFixed(2));
+                    salaireBrutMoisField.value = salaireBrutMois.toFixed(2);
+                }
+            }
+
+            // Listen to the "Salaire brut par heure" field
+            salaireBrutHeureField.addEventListener('input', function() {
+                checkSmicWarning();
+                recalculateSalaireBrutMois(); // Recalculate monthly salary when hourly salary changes
+            });
+
+            // Listen to the "Heures par semaine" field for changes and recalculate the monthly salary
+            heuresSemaineField.addEventListener('input', function() {
+                const heuresSemaine = parseFloat(heuresSemaineField.value) || 0;
+                if (heuresSemaine > 0) {
+                    heuresMoisField.value = (heuresSemaine * 4.3333).toFixed(2); // Update hours per month
+                    recalculateSalaireBrutMois(); // Recalculate monthly salary when weekly hours change
+                }
+            });
+
+            // Listen to the "Salaire brut par mois" field
+            salaireBrutMoisField.addEventListener('input', function() {
+                const salaireBrutMois = parseFloat(salaireBrutMoisField.value) || 0;
+                const heuresSemaine = parseFloat(heuresSemaineField.value) || 0;
+                
+                // Calculate the hourly salary based on monthly salary and weekly hours
+                if (heuresSemaine > 0) {
+                    const salaireBrutHeureCalculated = salaireBrutMois / (heuresSemaine * 4.3333);
+                    salaireBrutHeureField.value = salaireBrutHeureCalculated.toFixed(2);
+                    
+                    // Check if the calculated hourly wage is below SMIC
+                    checkSmicWarning();
+                }
+            });
+
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const bulletinLinks = document.querySelectorAll('.btn-primary');
+    
+            bulletinLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    // Show the spinner when a button is clicked
+                    document.getElementById('spinner').style.display = 'block';
+                });
+            });
+    
+            // Hide spinner after the page has fully loaded
+            window.addEventListener('load', function() {
+                document.getElementById('spinner').style.display = 'none';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check the checkbox if section2_checked is true
+            var section2Checked = "{{ section2_checked|yesno:'true,false' }}";
+            if (section2Checked === "true") {
+                document.getElementById('id_section2_toggle').checked = true;
+                document.getElementById('section2_content').style.display = 'block';  // Show Section 2 content
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const heuresSemaineInput = document.getElementById('id_heures_semaine');
+            const heuresMoisInput = document.getElementById('id_heures_mois');
+            const messageSemaine = document.createElement('span');
+            const messageMois = document.createElement('span');
+            
+            // Styling the messages
+            messageSemaine.style.color = 'gray';
+            messageMois.style.color = 'gray';
+
+            heuresSemaineInput.parentNode.appendChild(messageSemaine);
+            heuresMoisInput.parentNode.appendChild(messageMois);
+
+            // Validate weekly hours and clear both fields if the limit is exceeded
+            heuresSemaineInput.addEventListener('input', function() {
+                const heures = parseFloat(heuresSemaineInput.value) || 0;
+                if (heures > 39) {
+                    heuresSemaineInput.value = ''; // Clear weekly input
+                    heuresMoisInput.value = ''; // Clear monthly input
+                    messageSemaine.textContent = "Heures max par semaine : 39";
+                } else {
+                    messageSemaine.textContent = ''; // Clear message if within the limit
+                }
+            });
+
+            // Validate monthly hours and clear both fields if the limit is exceeded
+            heuresMoisInput.addEventListener('input', function() {
+                const heures = parseFloat(heuresMoisInput.value) || 0;
+                if (heures > 169) {
+                    heuresMoisInput.value = ''; // Clear monthly input
+                    heuresSemaineInput.value = ''; // Clear weekly input
+                    messageMois.textContent = "Heures max par mois : 169";
+                } else {
+                    messageMois.textContent = ''; // Clear message if within the limit
+                }
+            });
+
+            // Remove error message when clicking on weekly hours input
+            heuresSemaineInput.addEventListener('focus', function() {
+                messageSemaine.textContent = ''; // Remove message on focus
+                messageMois.textContent = ''; // Also remove the monthly message
+            });
+
+            // Remove error message when clicking on monthly hours input
+            heuresMoisInput.addEventListener('focus', function() {
+                messageSemaine.textContent = ''; // Also remove the weekly message
+                messageMois.textContent = ''; // Remove message on focus
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[type="radio"]');
+            checkboxes.forEach(function(checkbox) {
+                if (!checkbox.checked) {
+                    checkbox.value = 'Non';
+                }
+            });
+        });
+
+
+
+    </script>
+</body>
+</html>

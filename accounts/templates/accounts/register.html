@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Inscription - HOPE</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url("{% static 'ressources/css/fond_ecran.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Logo positioning */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .container {
+            display: flex;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .welcome-section {
+            background: #002D38;
+            color: #fff;
+            padding: 60px;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-top: 20px;
+        }
+
+        .form-section {
+            padding: 40px;
+            width: 70%;
+        }
+
+        .form-section h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            height: 45px;
+            padding: 10px;
+        }
+
+        .form-check-label {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            height: 45px;
+            border-radius: 5px;
+            font-weight: bold;
+            background: #002D38;
+            border: none;
+        }
+
+        .form-footer {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: #002D38;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo Container -->
+    <div class="logo">
+        <a class="navbar-brand" href="{% url 'accounts:accueil' %}">
+            <img src="{% static 'ressources/css/logo2.png' %}" alt="Hope Logo" width="250">
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Bienvenue !</h1>
+            <h3>Rejoignez HOPE</h3>
+            <p>Inscrivez-vous pour accéder aux outils en ligne.</p>
+        </div>
+
+        <div class="form-section">
+            <h2>Inscription</h2>
+            <form method="post">
+                {% csrf_token %}
+
+
+                <!-- Champ Nom -->
+                <div class="form-group" style="margin-top: 40px;">
+                    <label for="id_nom">Nom de l'entreprise : </label>
+                    {{ form.nom_entreprise }}
+                    {% if form.nom_entreprise.errors %}
+                        <div class="text-danger">
+                            {% for error in form.nom_entreprise.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- Champ Email -->
+                <div class="form-group" style="margin-top: 40px;">
+                    <label for="id_email">Adresse e-mail : </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="text-danger">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- Champ Nom d'utilisateur -->
+                <div class="form-group" style="margin-top: 40px;">
+                    <label for="id_username">Nom d'utilisateur : </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="text-danger">
+                            {% for error in form.username.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- Champ Nom d'utilisateur -->
+                <div class="form-group" style="margin-top: 40px;">
+                    <label for="id_username">Client chez HOPE : </label>
+                    {{ form.est_client }}
+                    {% if form.est_client.errors %}
+                        <div class="text-danger">
+                            {% for error in form.est_client.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+        
+                
+                <!-- Champ Mot de passe -->
+                <div class="form-group" style="margin-top: 40px;">
+                    <label for="id_password1">Mot de passe : </label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <div class="text-danger">
+                            {% for error in form.password1.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+        
+                <!-- Champ Confirmation du mot de passe -->
+                <div class="form-group" style="margin-bottom: 40px;">
+                    <label for="id_password2">Confirmer le mot de passe : </label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <div class="text-danger">
+                            {% for error in form.password2.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+
+
+                <button type="submit" class="btn btn-primary">S'inscrire</button>
+            </form>
+            <div class="form-footer">
+                <p>Vous avez déjà un compte ? <a href="{% url 'accounts:login' %}">Connectez-vous ici</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

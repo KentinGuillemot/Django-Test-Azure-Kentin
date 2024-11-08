@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Mes mangas</title>
+    <link rel="stylesheet" href="{% static 'ressources/css/main.css' %}">
+</head>
+<body>
+    <h1  style="color:#A52A2A">Edit d'un utilisateur :</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{form.as_p}} 
+        <input type="submit" value="Valider">
+    </form>
+</body>
+</html>

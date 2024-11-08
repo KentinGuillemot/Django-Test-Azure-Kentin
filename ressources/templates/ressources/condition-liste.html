@@ -1,0 +1,600 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>🍀 HOPE - Liste des objets</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'ressources/css/main.css' %}">
+    <style>
+        .custom-navbar {
+            background-color: #7a7a7a9d !important;
+            color: #073c47 !important;
+            position: fixed;
+            top: 0;
+            left: 50px; /* Align with sidebar */
+            width: calc(100% - 60px); /* Adjust to leave space for sidebar */
+            z-index: 1030;
+            height: 55px;
+            padding-left: 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: left 0.3s ease;
+        }
+        .custom-navbar.expanded {
+            left: 144px; /* Adjust if sidebar max-width changes */
+            width: calc(100% - 200px); /* Adjust if sidebar max-width changes */
+        }
+        .custom-navbar .nav-item a {
+            color: #073c47 !important;
+        }
+        .custom-navbar .nav-item a:hover {
+            color: #7dc4c4 !important;
+            text-decoration: underline;
+        }
+        .wrapper {
+            display: flex;
+            height: 100vh;
+            align-items: stretch;
+        }
+        .sidebar {
+            min-width: 50px;
+            max-width: 50px; /* Adjust max-width for expanded sidebar */
+            background: linear-gradient(to top, #000000, #073c47);
+            color: #ffffff;
+            transition: all 0.1s ease;
+            padding-top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1040;
+        }
+        .sidebar.expanded {
+            max-width: 200px;
+        }
+        .sidebar .nav-link {
+            color: #ffffff !important;
+            padding: 10px 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background-color: transparent !important; /* Ensure no background */
+        }
+        .sidebar .nav-link span {
+            display: none; /* Hide legend by default */
+            margin-left: 10px;
+        }
+        .sidebar.expanded .nav-link span {
+            display: inline;
+        }
+        .sidebar .navbar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar .nav-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .sidebar .nav-item:first-child {
+            margin-top: 0; /* Ensure the first item is at the top */
+        }
+        .sidebar .nav-item:hover .nav-link,
+        .sidebar .nav-item:hover .nav-link img,
+        .sidebar .nav-item:hover .nav-link span {
+            color: #7dc4c4 !important;
+        }
+        .sidebar .nav-item a:hover {
+            background-color: transparent !important; /* Remove the background */
+            text-decoration: none; /* Remove underline if any */
+        }
+        .sidebar .nav-item .dropdown-toggle::after {
+            display: none;
+        }
+        .sidebar-header, .sidebar ul.components {
+            border-bottom: none;
+        }
+        .dropdown-sidebar {
+            display: none;
+            position: absolute;
+            left: 60px;
+            top: 0;
+            background: #073c47;
+            min-width: 200px;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transition: left 0.3s ease;
+        }
+        .sidebar.expanded .dropdown-sidebar {
+            left: 200px; /* Adjust this value if sidebar max-width changes */
+        }
+        .dropdown-sidebar .dropdown-item {
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: block;
+            background-color: transparent !important; /* Ensure no background */
+            transition: color 0.3s ease;
+        }
+        .dropdown-sidebar .dropdown-item:hover {
+            color: #7dc4c4;
+            background-color: transparent !important; /* Ensure no background */
+        }
+        .sidebar-logo {
+            margin-top: auto;
+            padding: 10px;
+        }
+        .sidebar-logo img {
+            width: 100%;
+            height: auto;
+        }
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+            margin-left: 60px; /* Adjust this if the sidebar width changes */
+            margin-top: 70px; /* Adjust for the height of the navbar */
+            transition: margin-left 0.3s ease;
+        }
+        .content.expanded {
+            margin-left: 200px; /* Adjust this value if sidebar max-width changes */
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #7a7a7a51;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .search-bar input {
+            width: calc(100% - 80px);
+            display: inline-block;
+        }
+        .search-bar button {
+            width: 70px;
+            display: inline-block;
+            background-color: #073c47 !important;
+            color: white;
+            border: none;
+        }
+        .filter-tabs {
+            margin-bottom: 20px;
+        }
+        .filter-tabs .nav-link {
+            color: #073c47 !important;
+            background-color: #e9ecef !important;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+        }
+        .filter-tabs .nav-link.active {
+            background-color: #073c47 !important;
+            color: #ffffff !important;
+        }
+        .results-count {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .table-hover thead th {
+            background-color: #073c47 !important;
+            color: white;
+        }
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background-color: #073c47 !important;
+            border: none;
+        }
+
+        /* Style de la pagination */
+        .pagination .page-link {
+            background-color: #7dc4c4 !important;
+            color: white !important;
+            border: none;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #073c47 !important;
+            border: none;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #073c47 !important;
+        }µ
+        .search-bar1 {
+            display: flex;
+            align-items: center;
+            margin-right: auto;
+            margin-left: 20px;
+        }
+        .search-bar1 input {
+            border: 1px solid #073c47;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+        .search-bar1 button {
+            background-color: #073c47;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .search-bar1 button:hover {
+            background-color: #7dc4c4;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <a class="navbar-brand" href="#" id="sidebarToggle">
+            <img src="{% static 'ressources/css/sidebar.png' %}" style="width: 25px; height: 25px;margin-left: 10px;">
+        </a>
+        <a class="navbar-brand" href="{% url 'ressources:index' %}" style="color: #073c47;margin-left: 5px;">
+            GESTIONNAIRE DE RESSOURCES | Liste des conditions
+        </a>
+        <div class="search-bar1">
+            <input type="text" id="searchInput" placeholder="Rechercher...">
+            <button onclick="searchFunction()">
+                <img src="{% static 'ressources/css/loupe.png' %}" style="width: 20px; height: 20px;">
+            </button>
+        </div>
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="#">?</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><img src="{% static 'ressources/css/profil2.png' %}" style="width: 30px; height: 30px;"></a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:logout' %}">Déconnexion</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar">
+            <ul class="list-unstyled components navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ressources:index' %}">
+                        <img src="{% static 'ressources/css/maison_blanche2.png' %}" style="width: 25px; height: 25px;">
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ressources:calendar_view' %}">
+                        <img src="{% static 'ressources/css/calendrier_blanc.png' %}" style="width: 25px; height: 25px;">
+                        <span>Calendrier</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{% static 'ressources/css/liste_blanche.png' %}" style="width: 25px; height: 25px;">
+                        <span>Listes</span>
+                    </a>
+                    <div class="dropdown-sidebar">
+                        <a class="dropdown-item" href="{% url 'ressources:utili-liste' %}">Liste d'utilisateurs</a>
+                        <a class="dropdown-item" href="{% url 'ressources:objet-liste' %}">Liste d'objets</a>
+                        <a class="dropdown-item" href="{% url 'ressources:resa-liste' %}">Liste de réservations</a>
+                        <a class="dropdown-item" href="{% url 'ressources:condi-liste' %}">Liste des conditions</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{% static 'ressources/css/plus_blanc.png' %}" style="width: 25px; height: 25px;">
+                        <span>Ajouter</span>
+                    </a>
+                    <div class="dropdown-sidebar">
+                        <a class="dropdown-item" href="{% url 'ressources:create_user' %}">Ajout d'utilisateur</a>
+                        <a class="dropdown-item" href="{% url 'ressources:create_objet' %}">Ajout d'objet</a>
+                        <a class="dropdown-item" href="{% url 'ressources:ajout-resa' %}">Ajout de réservation</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <img src="{% static 'ressources/css/stat.png' %}" style="width: 25px; height: 25px;">
+                        <span>Statistiques</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{% static 'ressources/css/settings_blanc.png' %}" style="width: 25px; height: 25px;">
+                        <span>Paramètres</span>
+                    </a>
+                    <div class="dropdown-sidebar">
+                        <a class="dropdown-item" href="{% url 'ressources:choix_famille' 1 %}">Choix Nom des Familles</a>
+                        <a class="dropdown-item" href="{% url 'ressources:create_condition' %}">Parametres Conditions/Atouts</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <div id="content" class="content">
+            <!-- Barre de recherche -->
+            <div class="search-bar">
+                <input type="text" id="search-input" class="form-control" placeholder="Rechercher...">
+                <button class="btn btn-primary" onclick="searchObjects()">
+                    <img src="{% static 'ressources/css/loupe.png' %}" style="width: 25px; height: 25px;">
+                </button>
+            </div>
+
+            <!-- Onglets de filtres -->
+            <div class="filter-tabs">
+                <ul class="nav nav-tabs" id="filterTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="all-tab" href="#" onclick="filterObjects('')">Tout</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Nombre de résultats -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="results-count" id="results-count">
+                    Nombres de résultats : {{ objets|length }}
+                </div>
+                <a href="{% url 'ressources:create_condition' %}" class="btn btn-primary">+ Ajouter une condition</a>
+            </div>
+
+            <!-- Tableau des objets -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>NOM</th>
+                            <th colspan="2">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="objects-table-body">
+                        {% for condi in conditions %}
+                        <tr>
+                            <td>{{ condi.nom }}</td>
+                            <td><a href="{% url 'ressources:edit_condi' condi.id %}" class="btn btn-primary">🖉</a></td>
+                            <td><a href="{% url 'ressources:remove_condi' condi.id %}">❌</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <label for="rowsPerPage">Lignes par page:</label>
+                    <select id="rowsPerPage" class="form-control d-inline-block w-auto" onchange="paginateObjects()">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15" selected>15</option>
+                    </select>
+                </div>
+                <nav>
+                    <ul class="pagination" id="pagination">
+                        <!-- Pagination items will be inserted here dynamically -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Fonction de recherche
+        function searchObjects() {
+            const query = $('#search-input').val().toLowerCase();
+            const rows = $('#objects-table-body tr');
+
+            rows.each(function() {
+                const name = $(this).find('td:eq(0)').text().toLowerCase();
+                const famille1 = $(this).find('td:eq(1)').text().toLowerCase();
+                const famille2 = $(this).find('td:eq(2)').text().toLowerCase();
+                const famille3 = $(this).find('td:eq(3)').text().toLowerCase();
+                const famille4 = $(this).find('td:eq(4)').text().toLowerCase();
+                const conditions = $(this).find('td:eq(5)').text().toLowerCase();
+
+                if (name.includes(query) || famille1.includes(query) || famille2.includes(query) || famille3.includes(query) || famille4.includes(query) || conditions.includes(query)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            updateResultsCount();
+        }
+
+        // Fonction de filtrage
+        function filterObjects(condition) {
+            const rows = $('#objects-table-body tr');
+
+            rows.each(function() {
+                const conditions = $(this).find('td:eq(5)').text();
+
+                if (condition === '' || conditions.includes(condition)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            updateResultsCount();
+
+            // Met à jour les onglets actifs
+            $('#filterTabs .nav-link').removeClass('active');
+            if (condition === '') {
+                $('#all-tab').addClass('active');
+            } else {
+                $(`#condition-${condition}`).addClass('active');
+            }
+        }
+
+        // Fonction pour mettre à jour le nombre de résultats
+        function updateResultsCount() {
+            const visibleRows = $('#objects-table-body tr:visible').length;
+            $('#results-count').text(`Nombres de résultats : ${visibleRows}`);
+        }
+
+        function paginateObjects() {
+            const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+            const rows = $('#objects-table-body tr');
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            let currentPage = 1;
+
+            function showPage(page) {
+                currentPage = page;
+                rows.hide();
+                for (let i = (page - 1) * rowsPerPage; i < page * rowsPerPage && i < totalRows; i++) {
+                    $(rows[i]).show();
+                }
+                updatePagination();
+            }
+
+            function updatePagination() {
+                const pagination = $('#pagination');
+                pagination.empty();
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = $('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
+                    if (i === currentPage) {
+                        li.addClass('active');
+                    }
+                    li.on('click', function(e) {
+                        e.preventDefault();
+                        showPage(i);
+                    });
+                    pagination.append(li);
+                }
+            }
+
+            showPage(1);
+        }
+
+        $(document).ready(function() {
+            paginateObjects();
+
+            const navItems = document.querySelectorAll(".nav-item.dropdown");
+
+            navItems.forEach(item => {
+                const link = item.querySelector(".nav-link");
+                const dropdownSidebar = item.querySelector(".dropdown-sidebar");
+
+                link.addEventListener("click", function(event) {
+                    event.stopPropagation();
+                    const isOpen = dropdownSidebar.style.display === "block";
+                    closeAllDropdowns();
+                    if (!isOpen) {
+                        dropdownSidebar.style.display = "block";
+                    }
+                });
+            });
+
+            document.addEventListener("click", function(event) {
+                if (!event.target.closest('.nav-item.dropdown')) {
+                    closeAllDropdowns();
+                }
+            });
+
+            function closeAllDropdowns() {
+                const dropdowns = document.querySelectorAll(".dropdown-sidebar");
+                dropdowns.forEach(dropdown => {
+                    dropdown.style.display = "none";
+                });
+            }
+
+            const navItemsLinks = document.querySelectorAll('.sidebar .nav-item');
+
+            navItemsLinks.forEach(item => {
+                const img = item.querySelector('img');
+                const span = item.querySelector('span');
+
+                const itemText = span ? span.textContent.trim() : '';
+                const originalSrcs = {
+                    "Accueil": "{% static 'ressources/css/maison_blanche2.png' %}",
+                    "Calendrier": "{% static 'ressources/css/calendrier_blanc.png' %}",
+                    "Listes": "{% static 'ressources/css/liste_blanche.png' %}",
+                    "Ajouter": "{% static 'ressources/css/plus_blanc.png' %}",
+                    "Statistiques": "{% static 'ressources/css/stat.png' %}",
+                    "Paramètres": "{% static 'ressources/css/settings_blanc.png' %}"
+                };
+                const hoverSrcs = {
+                    "Accueil": "{% static 'ressources/css/maison_verte2.png' %}",
+                    "Calendrier": "{% static 'ressources/css/calendrier_vert.png' %}",
+                    "Listes": "{% static 'ressources/css/liste_vert.png' %}",
+                    "Ajouter": "{% static 'ressources/css/plus_vert.png' %}",
+                    "Statistiques": "{% static 'ressources/css/stat_vert.png' %}",
+                    "Paramètres": "{% static 'ressources/css/settings_vert.png' %}"
+                };
+
+                if (originalSrcs[itemText] && hoverSrcs[itemText]) {
+                    item.addEventListener('mouseenter', () => {
+                        img.src = hoverSrcs[itemText];
+                        if (span) span.style.color = '#7dc4c4';
+                    });
+                    item.addEventListener('mouseleave', () => {
+                        img.src = originalSrcs[itemText];
+                        if (span) span.style.color = '#ffffff';
+                    });
+                }
+            });
+
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            const navbar = document.querySelector('.custom-navbar');
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('expanded');
+                content.classList.toggle('expanded');
+                navbar.classList.toggle('expanded');
+                const dropdowns = document.querySelectorAll('.dropdown-sidebar');
+                dropdowns.forEach(dropdown => {
+                    if (sidebar.classList.contains('expanded')) {
+                        dropdown.style.left = '200px';
+                    } else {
+                        dropdown.style.left = '60px';
+                    }
+                });
+            });
+        });
+
+        function searchFunction() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const links = {
+                'accueil': '{% url "ressources:index" %}',
+                'calendrier': '{% url "ressources:calendar_view" %}',
+                'liste d\'utilisateurs': '{% url "ressources:utili-liste" %}',
+                'liste d\'objets': '{% url "ressources:objet-liste" %}',
+                'liste de réservations': '{% url "ressources:resa-liste" %}'
+            };
+            if (links[query]) {
+                window.location.href = links[query];
+            } else {
+                alert('Aucun résultat trouvé');
+            }
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

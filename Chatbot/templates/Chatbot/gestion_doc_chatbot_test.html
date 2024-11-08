@@ -1,0 +1,709 @@
+
+{% load static %}
+{% load customtags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>🍀 HOPE - Simulateur de Paie</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text for contrast */
+        }
+
+        /* Chatbot Section */
+        .chatbot-container {
+            display: flex;
+            height: 100vh;
+            margin-top: 0px;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(#1a1a1a, #000000); /* Dark gradient */
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+            width: 250px; /* Fixe la taille de la sidebar */
+            flex-shrink: 0; /* Empêche de rétrécir */
+            height: 100vh
+        }
+
+        .sidebar img {
+            cursor: pointer;
+        }
+
+        .sidebar h5 {
+            color: #bb86fc; /* Slight purple tint */
+            
+        }
+
+        .sidebar h6 {
+            padding: 10px;
+            background-color: #333333; /* Purple hover effect */
+            border-radius: 40px;
+            
+        }
+        .sidebar h6:hover {
+            padding: 10px;
+            background-color: #505050; /* Purple hover effect */
+            border-radius: 40px;
+            
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding-left: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #bb86fc; /* Purple hover effect */
+            border-radius: 40px;
+        }
+
+        
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+            border-bottom: 2px solid #333333;
+        }
+
+        .header .model-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #bb86fc; /* Purple model name */
+        }
+
+        .header .header-buttons img {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        /* Chat Window */
+        .chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #1f1f1f; /* Dark background for chat window */
+            border-left: 2px solid #333333; /* Darker border */
+        }
+
+        /* Chat Messages */
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto; /* Ajoute une barre de défilement si nécessaire */
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #121212; /* Conserve la couleur de fond actuelle */
+            border-radius: 10px;
+            height: calc(100vh - 160px); /* Fixe une hauteur pour que la fenêtre de chat ne change pas */
+        }
+
+
+        .chat-messages p {
+            margin-bottom: 10px;
+        }
+
+
+
+        .chat-messages .user-message {
+            text-align: right;
+            color: #bb86fc;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+            margin-left: auto;
+            margin-top: 60px;
+            margin-bottom: 40px;
+            opacity: 0;  /* Start hidden */
+            animation: fadeIn 0.5s forwards;  /* Fade-in animation */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 24px; /* Légèrement plus grand */
+            height: 24px;
+            border: 4px solid rgba(255, 255, 255, 0.2); /* Bordure semi-transparente */
+            border-top: 4px solid #bb86fc; /* Dégradé de couleurs pour plus de style */
+            border-right: 4px solid #8f5af2;
+            border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* Animation avec easing pour un mouvement non linéaire */
+            box-shadow: 0 0 10px rgba(187, 134, 252, 0.6); /* Ombre violette pour un effet lumineux */
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chat-messages .bot-message {
+            background-color: #333333; /* Dark gray bot message bubble */
+            color: #e0e0e0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+            
+        }
+
+        /* Input Bar */
+        .input-bar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .input-bar {
+            display: flex;
+            width: 50%; /* Smaller and centered input bar */
+            background-color: #333333;
+            border-radius: 30px;
+            padding: 5px;
+            border: 1px solid #333333;
+        }
+
+        .input-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: transparent;
+            color: #e0e0e0; /* Light text for input */
+            border: none;
+            outline: none;
+        }
+
+        .input-bar input::placeholder {
+            color: #bbbbbb; /* Light gray placeholder */
+        }
+
+        .input-bar button {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            margin-left: 10px;
+        }
+
+        .input-bar button img {
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Message under input bar */
+        .input-bar-message {
+            text-align: center;
+            font-size: 0.8em;
+            color: rgba(128, 128, 128, 0.664);
+        }
+
+        /* Scrollbar Styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: #bb86fc; /* Purple scrollbar */
+            border-radius: 10px;
+        }
+
+        .hide-sidebar {
+            width: 0;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        /* Sidebar toggle button when hidden */
+        .show-sidebar-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 999;
+            display: block;
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+        }
+
+        .hide-show-sidebar-btn {
+            display: none;
+        }
+
+        .slide-in {
+            position: relative;
+            opacity: 0;
+            animation: slideIn 0.7s ease forwards; /* Durée et easing de l'animation */
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-50px); /* Le message démarre en dehors de l'écran, à gauche */
+                opacity: 0;
+            }
+            60% {
+                transform: translateX(10px); /* L'effet de rebond vers l'avant */
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0); /* Le message est à sa position finale */
+                opacity: 1;
+            }
+        }
+
+        /* Apply same style to both Copier and Sources buttons */
+        .copy-btn, .sources-btn {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 12px;
+            color: #bb86fc;
+            border: none;
+            border-radius: 40px;
+            background: transparent;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px; /* Add space between buttons */
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-btn:hover, .sources-btn:hover {
+            background-color: #bb86fc; /* Hover effect for both buttons */
+            color: #fff;
+            border-radius: 40px;
+        }
+
+
+        .copy-confirmation {
+            color: rgb(161, 161, 161);
+            font-size: 12px;
+            margin-left: 10px;
+            display: none;
+        }
+
+        /* Additional styling for proper layout and spacing */
+        .bot-message-wrapper {
+            margin-bottom: 1px; /* Adds a small gap between the message bubble and the buttons */
+        }
+        /* Styling for the button container */
+        .button-wrapper {
+            text-align: left; /* Align the buttons to the left, change to 'center' or 'right' if needed */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); /* Blurred background */
+            backdrop-filter: blur(5px); /* Blur effect */
+            justify-content: center; /* Horizontally center the modal */
+            align-items: center; /* Vertically center the modal */
+            opacity: 0; /* Start with transparent */
+            transition: opacity 0.3s ease; /* Smooth fade-in/out effect */
+        }
+
+        .modal.show {
+            opacity: 1; /* Fully visible when shown */
+        }
+
+        .modal-content {
+            scrollbar-width: thin; /* Make the scrollbar thinner */
+            scrollbar-color: #bb86fc #f1f1f1; /* Thumb color (purple), track color (light grey) */
+            background-color: #fefefe;
+            color: black;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 1200px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            height: auto;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.8); /* Start with a smaller scale */
+            transition: transform 0.2s ease; /* Smooth scaling effect */
+        }
+        /* Style for WebKit-based browsers (Chrome, Safari, Edge) */
+        .modal-content::-webkit-scrollbar {
+            width: 12px; /* Width of the scrollbar */
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1; /* Track background */
+            border-radius: 10px; /* Rounded corners for the scrollbar track */
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background-color: #bb86fc; /* Purple color for the scrollbar thumb */
+            border-radius: 50px; /* Rounded corners for the thumb */
+            border: 2px solid #f1f1f1; /* Creates space around the thumb for more visible border */
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background-color: #9a67ea; /* Darker purple on hover */
+        }
+
+        .close {
+            color: #8f5af2;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Smooth appearance of modal */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        /* Customize the highlight style */
+        mark {
+            background-color: #ffff00; /* Yellow background */
+            padding: 0 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Chatbot Section -->
+    <div class="chatbot-container">
+        <!-- Sidebar with toggle functionality -->
+        <div id="sidebar" class="sidebar">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <img src="{% static 'ressources/css/sidebar_in.png' %}" style="width: 23px; height: 23px;" id="sidebar-toggle">
+                <a class="nav-link" href="{% url 'Chatbot:documents_chatbot2' %}"><img src="{% static 'ressources/css/settings_blanc.png' %}" style="width: 20px; height: 20px;" id="sidebar-toggle"></a>
+            </div>
+
+            <h6 style="margin-top: 60px;margin-bottom: 20px;">
+                <img src="{% static 'ressources/css/plus_blanc.png' %}" style="width: 20px; height: 20px; margin-right: 15px;">   Nouvelle discussion
+            </h6>
+            
+            <h5 style="margin-top: 40px;margin-bottom: 20px;">Discussions récentes</h5>
+            <ul>
+                <li><strong>Aujourd'hui</strong></li>
+                <li><a href="#">Combien de temps dur...</a></li>
+                <li><a href="#">Calcul moi le plafond...</a></li>
+                <li><strong>Hier</strong></li>
+                <li><a href="#">Combien d'heures max...</a></li>
+                <li><strong>7 jours précédents</strong></li>
+                <li><a href="#">D'après quelle loi...</a></li>
+            </ul>
+        </div>
+        <img id="show-sidebar" src="{% static 'ressources/css/sidebar_out.png' %}" style="width: 23px; height: 23px;" class="show-sidebar-btn hide-show-sidebar-btn" alt="Show Sidebar">
+
+        <div class="chat-window" style="height: auto;">
+            <!-- Header with model name and buttons -->
+            <div class="header">
+                <div class="model-name">ANIA</div>
+                <div class="header-buttons">
+                    <img src="{% static 'ressources/css/point_interro.png' %}" style="width: 15px; height: 15px;">
+                    <img src="{% static 'ressources/css/profil_violet.png' %}" style="width: 25px; height: 25px; margin-right: 15px;">
+                </div>
+            </div>
+
+            <h2 style="margin-left: 20px;">Liste des documents : </h2>
+            
+            <table class="table" style="color : white;margin-bottom: 300px; margin-left: 100px; border: 1px solid white; border-collapse: collapse; width: 50%; border-radius: 10px; overflow: hidden;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #8f5af2;">Nom du Document</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in document_list %}
+                        <tr>
+                            <td style="border: 1px solid white;">
+                                {% if ".pdf" in document %}
+                                    <img src="{% static 'ressources/css/logo_pdf.png' %}" alt="PDF Logo" style="width: 20px; height: 20px; margin-right: 10px;">
+                                {% endif %}
+                                {{ document }}
+                            </td>
+                            <td style="border: 1px solid white; text-align: center;">
+                                <a href="{% url 'Chatbot:remove_doc' document %}">
+                                    <img src="{% static 'ressources/css/corbeille_blanche.png' %}" style="width: 26px; height: 26px;" alt="Delete">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td style="text-align: center; padding: 15px;">
+                            <a href="{% url 'Chatbot:ajout_doc_temp' %}" class="btn btn-primary" style="background-color: #8f5af2; border: none; padding: 10px 20px; border-radius: 15px; display: inline-flex; align-items: center;">
+                                <img src="{% static 'ressources/css/plus_blanc.png' %}" style="width: 15px; height: 15px; margin-right: 10px;" alt="Ajouter">
+                                Ajouter un document
+                            </a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Source Modal -->
+    <div id="source-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="close">&times;</span>
+            <div id="source-content">
+                <!-- The top 5 chunks will be inserted here dynamically -->
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Sidebar toggle functionality
+        var sidebar = document.getElementById("sidebar");
+        var showSidebarBtn = document.getElementById("show-sidebar");
+
+        document.getElementById("sidebar-toggle").addEventListener("click", function() {
+            sidebar.classList.add("hide-sidebar");
+            showSidebarBtn.style.display = "block";
+        });
+
+        document.getElementById("show-sidebar").addEventListener("click", function() {
+            sidebar.classList.remove("hide-sidebar");
+            showSidebarBtn.style.display = "none";
+        });
+
+        
+
+
+        // Function to copy the bot's response
+        function copyToClipboard(buttonElement) {
+            var messageElement = buttonElement.parentElement.previousElementSibling.querySelector('.bot-message-text');
+            var tempTextArea = document.createElement('textarea');
+            tempTextArea.value = messageElement.innerHTML.replace(/<br>/g, "\n");  // Convert HTML line breaks to newlines
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            // Show "Copied!" temporarily
+            buttonElement.innerText = 'Copié !';
+            setTimeout(function () {
+                buttonElement.innerText = 'Copier';
+            }, 2000);
+        }
+
+        function fetchSources(buttonElement, userInput) {
+            fetch("{% url 'Chatbot:get_sources' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: new URLSearchParams({
+                    'query': userInput
+                })
+            }).then(response => response.json()).then(data => {
+                var sources = data.sources || [];
+                var sourceContentDiv = document.getElementById('source-content');
+                sourceContentDiv.innerHTML = "";  // Clear previous content
+
+                // Add the formatted chunks to the modal with highlighted text
+                sources.forEach(source => {
+                    var chunkDiv = document.createElement('div');
+                    chunkDiv.innerHTML = source.segment;  // Insert the HTML formatted chunk
+                    sourceContentDiv.appendChild(chunkDiv);
+                });
+
+                // Display the modal
+                document.getElementById('source-modal').style.display = "flex";
+                setTimeout(function() {
+                    document.getElementById('source-modal').classList.add('show');
+                }, 10);
+            }).catch(error => {
+                console.error("Fetch error:", error);
+                alert("Erreur lors de la récupération des sources.");
+            });
+        }
+
+
+        // Close the modal when the user clicks on the close button
+        document.getElementById('close-modal').onclick = function() {
+            var modal = document.getElementById('source-modal');
+            modal.classList.remove('show'); // Remove the 'show' class for smooth disappearance
+            setTimeout(function() {
+                modal.style.display = "none"; // Hide the modal completely after transition
+            }, 400); // Wait for the transition to complete (0.4s)
+        }
+
+        // Close the modal when the user clicks outside the modal content
+        window.onclick = function(event) {
+            var modal = document.getElementById('source-modal');
+            if (event.target == modal) {
+                modal.classList.remove('show');
+                setTimeout(function() {
+                    modal.style.display = "none"; 
+                }, 400);
+            }
+        }
+
+        $(document).ready(function () {
+            $('#send-btn').on('click', function () {
+                var userInput = $('#user-input').val();
+                if (userInput.trim() !== "") {
+                    // Add the user message to the chat window
+                    var userMessageElement = $('<p class="user-message slide-in"></p>').text(userInput);
+                    $('#chat-messages').append(userMessageElement);
+
+                    // Clear the input field
+                    $('#user-input').val('');
+
+                    // Automatically scroll to the bottom after adding the user message
+                    $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+
+                    // Add a temporary response with a spinner while waiting for the bot's answer
+                    var temporaryResponse = $(
+                        '<p class="bot-message" id="temporary-response">' +
+                        '<img src="{% static "ressources/css/papillon_violet.png" %}" style="width: 20px; height: 20px;margin-right: 10px;">' +
+                        '<span class="loading-spinner"></span>' +
+                        '</p>'
+                    );
+                    $('#chat-messages').append(temporaryResponse);
+
+                    // Automatically scroll to the bottom after adding the temporary response
+                    $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+
+                    // Send the user input to the backend and fetch the response
+                    fetch("{% url 'Chatbot:chatbot_app' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: new URLSearchParams({
+                            'user_input': userInput
+                        })
+                    }).then(response => {
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder();
+                        let chatbotMessage = "";
+
+                        // Wrapper for the bot message and buttons
+                        let botMessageWrapper = $('<div class="bot-message-wrapper"><p class="bot-message"><img src="{% static "ressources/css/papillon_violet.png" %}" style="width: 20px; height: 20px;margin-right: 10px;"><span class="bot-message-text"></span></p></div>');
+
+                        // Append the wrapper now so the stream can start adding to it
+                        $('#chat-messages').append(botMessageWrapper);
+
+                        let isFirstChunk = true;  // To track the first chunk and remove the spinner
+
+                        function readStream() {
+                            reader.read().then(({ done, value }) => {
+                                if (done) {
+                                    // Append the buttons after the bot message
+                                    let buttonWrapper = $('<div class="button-wrapper"></div>').append(
+                                        `<button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>` +
+                                        `<button class="sources-btn" onclick="fetchSources(this, '${userInput}')">Sources</button>`
+                                    );
+                                    botMessageWrapper.after(buttonWrapper);
+
+                                    // Automatically scroll to the bottom after adding the buttons
+                                    $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+                                    return;
+                                }
+
+                                // On receiving the first chunk, remove the temporary spinner
+                                if (isFirstChunk) {
+                                    $('#temporary-response').remove();
+                                    isFirstChunk = false;
+                                }
+
+                                // Stream and append the formatted HTML content
+                                chatbotMessage += decoder.decode(value);
+                                const formattedMessage = chatbotMessage; // Text is already formatted by the server
+                                botMessageWrapper.find('.bot-message-text').html(formattedMessage);
+
+                                // Scroll to the bottom after adding each chunk
+                                $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+
+                                // Continue reading the stream
+                                readStream();
+                            }).catch(error => {
+                                console.error("Stream error:", error);
+                                $('#temporary-response').remove(); // Remove the temporary response in case of error
+                                $('#chat-messages').append('<p class="bot-message">Erreur lors du traitement de votre demande.</p>');
+                                $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight); // Automatically scroll in case of error
+                            });
+                        }
+
+                        // Start reading the stream
+                        readStream();
+                    }).catch(error => {
+                        console.error("Fetch error:", error);
+                        $('#temporary-response').remove(); // Remove the temporary response in case of error
+                        $('#chat-messages').append('<p class="bot-message">Erreur lors du traitement de votre demande.</p>');
+                        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight); // Automatically scroll in case of error
+                    });
+                }
+            });
+        });
+
+
+    </script>
+
+</body>
+</html>
